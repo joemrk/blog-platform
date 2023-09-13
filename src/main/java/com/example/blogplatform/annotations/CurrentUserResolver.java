@@ -6,7 +6,7 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import taskmanager.taskmanager.user.User;
+import com.example.blogplatform.user.User;
 
 
 public class CurrentUserResolver implements HandlerMethodArgumentResolver {
