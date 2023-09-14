@@ -11,8 +11,6 @@ public class BlogPlatformApplication {
   }
 
 
-  // TODO: user - name, email, password
-  // TODO: post - title, created_at, updated_at, body, user_id, image
   // TODO: comment - text, created_at, user_id, post_id
   // TODO: category - name
   // TODO: tags - name
