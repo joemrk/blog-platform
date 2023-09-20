@@ -35,15 +35,13 @@ public class PostService {
 
   public Post createOne(PostCreateDto dto) {
     String imagePath = fileSystemService.uploadBase64ToSftp(dto.getImage().getBase64());
-    System.out.println(imagePath);
-    throw new BadRequestException("Bad request");
-//    Post create = Post.builder()
-//            .body(dto.getBody())
-//            .title(dto.getTitle())
-//            .image(imagePath)
-//            .build();
-//
-//    return postRepository.save(create);
+    Post create = Post.builder()
+            .body(dto.getBody())
+            .title(dto.getTitle())
+            .image(imagePath)
+            .build();
+
+    return postRepository.save(create);
   }
 
   public void delete(Long id) {
