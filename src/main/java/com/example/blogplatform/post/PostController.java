@@ -34,7 +34,7 @@ public class PostController {
   }
 
   @PostMapping
-  public ResponseEntity<Post> createOne(@RequestBody PostCreateDto dto){
+  public ResponseEntity<Post> createOne(@RequestBody PostCreateDto dto) {
     return ResponseEntity.ok().body(postService.createOne(dto));
   }
 

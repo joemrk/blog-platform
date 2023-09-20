@@ -6,5 +6,6 @@ import lombok.Data;
 public class PostCreateDto {
   private String title;
   private String body;
-  private String image;
+  private ImageDto image;
 }
+

@@ -1,6 +1,8 @@
 package com.example.blogplatform.post;
 
+import com.example.blogplatform.exception.errors.BadRequestException;
 import com.example.blogplatform.exception.errors.NotFoundException;
+import com.example.blogplatform.fs.FileSystemService;
 import com.example.blogplatform.post.dto.PostCreateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,10 +13,11 @@ import java.util.List;
 public class PostService {
 
   private final PostRepository postRepository;
-
+  private final FileSystemService fileSystemService;
   @Autowired
-  public PostService(PostRepository postRepository) {
+  public PostService(PostRepository postRepository, FileSystemService fileSystemService) {
     this.postRepository = postRepository;
+    this.fileSystemService = fileSystemService;
   }
 
   public List<Post> findAll() {
@@ -31,13 +34,16 @@ public class PostService {
   }
 
   public Post createOne(PostCreateDto dto) {
-    Post create = Post.builder()
-            .body(dto.getBody())
-            .title(dto.getTitle())
-            .image(dto.getImage())
-            .build();
-
-    return postRepository.save(create);
+    String imagePath = fileSystemService.uploadBase64ToSftp(dto.getImage().getBase64());
+    System.out.println(imagePath);
+    throw new BadRequestException("Bad request");
+//    Post create = Post.builder()
+//            .body(dto.getBody())
+//            .title(dto.getTitle())
+//            .image(imagePath)
+//            .build();
+//
+//    return postRepository.save(create);
   }
 
   public void delete(Long id) {

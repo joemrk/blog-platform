@@ -28,3 +28,9 @@ logging:
     org:
       springframework:
         security: TRACE # security filters logs // logging.level.org.springframework.security=TRACE
+
+sftp:
+  host: localhost
+  port: 22
+  user: user
+  password: password

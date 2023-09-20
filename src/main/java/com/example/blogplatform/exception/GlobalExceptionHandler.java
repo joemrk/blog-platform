@@ -3,6 +3,7 @@ package com.example.blogplatform.exception;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,15 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(
             new ErrorResponse(HttpStatus.FORBIDDEN.value(), "Forbidden", ex.getMessage()),
             HttpStatus.FORBIDDEN
+    );
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+    return new ResponseEntity<>(
+            new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Bad request", ex.getMessage()),
+            HttpStatus.BAD_REQUEST
     );
   }
 
