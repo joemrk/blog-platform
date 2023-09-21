@@ -2,6 +2,7 @@ package com.example.blogplatform.comment;
 
 import com.example.blogplatform.post.Post;
 import com.example.blogplatform.user.User;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,7 @@ import java.util.Date;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonSerialize(using = CustomCommentSerializer.class)
 public class Comment {
   @Id
   @GeneratedValue(strategy= GenerationType.IDENTITY)

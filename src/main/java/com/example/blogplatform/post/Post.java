@@ -1,6 +1,7 @@
 package com.example.blogplatform.post;
 
 import com.example.blogplatform.user.User;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,7 @@ import java.util.Date;
 @Table(name="posts")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonSerialize(using = CustomPostSerializer.class)
 public class Post {
 
   @Id
