@@ -47,21 +47,21 @@ public class PostService {
   }
 
   public void delete(Long id, User current) {
-    Optional<Post> exist = postRepository.findByIdAndUserId(id, current.getId());
-    if(exist.isEmpty()){
-      throw new NotFoundException("Post not found");
+    Post exist = postRepository.findByIdAndUserId(id, current.getId());
+    if(exist != null){
+      postRepository.deleteById(id);
     }
-
-    postRepository.deleteById(id);
   }
 
   public Post update(Post post, User current) {
-    Optional<Post> exist = postRepository.findByIdAndUserId(post.getId(), current.getId());
-    if(exist.isEmpty()){
+    Post exist = postRepository.findByIdAndUserId(post.getId(), current.getId());
+    if(exist == null){
       throw new NotFoundException("Post not found");
     }
+    exist.setBody(post.getBody());
+    exist.setTitle(post.getTitle());
 
-    return postRepository.save(post);
+    return postRepository.save(exist);
   }
 
   public List<Post> findByUser(Long userId) {

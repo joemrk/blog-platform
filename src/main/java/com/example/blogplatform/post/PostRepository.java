@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
   List<Post> findByTitleLikeIgnoreCase(String title);
 
-  Optional<Post> findByIdAndUserId(Long id, Long userId);
+  Post findByIdAndUserId(Long id, Long userId);
 
   List<Post> findByUserId(Long userId);
 }

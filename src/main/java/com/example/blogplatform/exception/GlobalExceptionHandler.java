@@ -11,6 +11,7 @@ import com.example.blogplatform.exception.errors.BadRequestException;
 import com.example.blogplatform.exception.errors.ConflictException;
 import com.example.blogplatform.exception.errors.NotFoundException;
 import com.example.blogplatform.exception.errors.UnauthorizedException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @RestControllerAdvice
 @ResponseBody
@@ -64,6 +65,17 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
     return new ResponseEntity<>(
             new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Bad request", ex.getMessage()),
+            HttpStatus.BAD_REQUEST
+    );
+  }
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+    return new ResponseEntity<>(
+//            new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Bad request", ex.getMessage()),
+//            new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Bad request", ex.getCause().getMessage()),
+            new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Bad request", ex.getMostSpecificCause().getMessage()),
             HttpStatus.BAD_REQUEST
     );
   }
