@@ -1,5 +1,6 @@
 package com.example.blogplatform.post;
 
+import com.example.blogplatform.category.Category;
 import com.example.blogplatform.user.User;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
@@ -45,4 +46,9 @@ public class Post {
   @JoinColumn(name = "userId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private User user;
+
+  @ManyToOne
+  @JoinColumn(name = "categoryId")
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Category category;
 }

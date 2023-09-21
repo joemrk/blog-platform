@@ -11,7 +11,6 @@ public class BlogPlatformApplication {
   }
 
 
-  // TODO: comment - text, created_at, user_id, post_id
   // TODO: category - name
   // TODO: tags - name
   // TODO: score like reddit - post_id, positive, negative

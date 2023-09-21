@@ -40,6 +40,11 @@ public class PostController {
     return ResponseEntity.ok().body(postService.findByUser(Long.parseLong(id)));
   }
 
+  @GetMapping("/category/{id}")
+  public ResponseEntity<List<Post>> findByCategory(@PathVariable String id){
+    return ResponseEntity.ok().body(postService.findByCategory(Long.parseLong(id)));
+  }
+
   @GetMapping("/my")
   public ResponseEntity<List<Post>> findByCurrentUser(@CurrentUser User current){
     return ResponseEntity.ok().body(postService.findByUser(current.getId()));

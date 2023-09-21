@@ -1,5 +1,6 @@
 package com.example.blogplatform.post;
 
+import com.example.blogplatform.category.Category;
 import com.example.blogplatform.exception.errors.NotFoundException;
 import com.example.blogplatform.fs.FileSystemService;
 import com.example.blogplatform.post.dto.PostCreateDto;
@@ -40,6 +41,7 @@ public class PostService {
             .body(dto.getBody())
             .title(dto.getTitle())
             .user(User.builder().id(current.getId()).build())
+            .category(Category.builder().id(dto.getCategoryId()).build())
             .image(imagePath)
             .build();
 
@@ -66,5 +68,9 @@ public class PostService {
 
   public List<Post> findByUser(Long userId) {
     return postRepository.findByUserId(userId);
+  }
+
+  public List<Post> findByCategory(Long userId) {
+    return postRepository.findByCategoryId(userId);
   }
 }

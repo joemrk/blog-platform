@@ -7,5 +7,6 @@ public class PostCreateDto {
   private String title;
   private String body;
   private ImageDto image;
+  private Long categoryId;
 }
 

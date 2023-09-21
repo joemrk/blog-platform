@@ -27,6 +27,16 @@ public class CustomPostSerializer extends JsonSerializer<Post> {
       gen.writeEndObject();
     }
 
+    if(post.getCategory() == null){
+      gen.writeNullField("category");
+    } else {
+      gen.writeFieldName("category");
+      gen.writeStartObject();
+      gen.writeNumberField("id", post.getCategory().getId());
+      gen.writeStringField("name", post.getCategory().getName());
+      gen.writeEndObject();
+    }
+
     gen.writeEndObject();
   }
 }
