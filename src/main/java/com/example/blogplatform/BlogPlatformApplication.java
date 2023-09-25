@@ -11,9 +11,9 @@ public class BlogPlatformApplication {
   }
 
 
-  // TODO: category - name
-  // TODO: tags - name
-  // TODO: score like reddit - post_id, positive, negative
+  // tags
+  // fucking manytomany. did it itself
 
-  //TODO: sftp service and options. check exist libs to make better
+  // TODO: score like reddit - post_id, positive, negative
+  // TODO: sftp service and options. check exist libs to make better
 }

@@ -4,35 +4,50 @@ import com.example.blogplatform.category.Category;
 import com.example.blogplatform.exception.errors.NotFoundException;
 import com.example.blogplatform.fs.FileSystemService;
 import com.example.blogplatform.post.dto.PostCreateDto;
+import com.example.blogplatform.post.dto.PostResponse;
+import com.example.blogplatform.posts_tags.PostsTags;
+import com.example.blogplatform.posts_tags.PostsTagsRepository;
+import com.example.blogplatform.tag.Tag;
+import com.example.blogplatform.tag.TagService;
 import com.example.blogplatform.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
-
   private final PostRepository postRepository;
   private final FileSystemService fileSystemService;
+  private final PostsTagsRepository postsTagsRepository;
+  private final TagService tagsService;
+
   @Autowired
-  public PostService(PostRepository postRepository, FileSystemService fileSystemService) {
+  public PostService(PostRepository postRepository, FileSystemService fileSystemService, PostsTagsRepository postsTagsRepository, TagService tagsService) {
     this.postRepository = postRepository;
     this.fileSystemService = fileSystemService;
+    this.postsTagsRepository = postsTagsRepository;
+    this.tagsService = tagsService;
   }
 
-  public List<Post> findAll() {
-    return postRepository.findAll();
+  public List<PostResponse> findAll() {
+    List<Post> posts =  postRepository.findAll();
+    return this.joinTags(posts);
+//    return posts;
   }
 
-  public Post findById(Long id) {
-    return postRepository.findById(id)
+  public PostResponse findById(Long id) {
+    Post exist =  postRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Post not found"));
+    return this.joinTags(List.of(exist)).get(0);
   }
 
-  public List<Post> findByTitle(String title) {
-    return postRepository.findByTitleLikeIgnoreCase("%" + title + "%");
+  public List<PostResponse> findByTitle(String title) {
+    return joinTags(postRepository.findByTitleLikeIgnoreCase("%" + title + "%"));
   }
 
   public Post createOne(PostCreateDto dto, User current) {
@@ -45,7 +60,14 @@ public class PostService {
             .image(imagePath)
             .build();
 
-    return postRepository.save(create);
+    Post newPost =  postRepository.save(create);
+
+    List<PostsTags> postsTags = dto.getTags().stream().map(t ->
+            PostsTags.builder().tagId(t.getId()).postId(newPost.getId()).build()).toList();
+
+    postsTagsRepository.saveAll(postsTags);
+
+    return newPost;
   }
 
   public void delete(Long id, User current) {
@@ -66,11 +88,42 @@ public class PostService {
     return postRepository.save(exist);
   }
 
-  public List<Post> findByUser(Long userId) {
-    return postRepository.findByUserId(userId);
+  public List<PostResponse> findByUser(Long userId) {
+    return joinTags(postRepository.findByUserId(userId));
   }
 
   public List<Post> findByCategory(Long userId) {
     return postRepository.findByCategoryId(userId);
+  }
+
+  private List<PostResponse> joinTags(List<Post> posts) {
+    // cuz fucking many_to_many don't work
+    Set<Long> postsIds = posts.stream()
+            .map(Post::getId)
+            .collect(Collectors.toSet());
+    List<PostsTags> postsTags = postsTagsRepository.findByPostIdIn(postsIds);
+    Set<Long> tagsIds = postsTags.stream()
+            .map(PostsTags::getTagId)
+            .collect(Collectors.toSet());
+
+    Map<Long, Tag> tags = tagsService.findTagsIn(tagsIds);
+
+    Map<Long, List<Tag>> tagsByPostId = postsTags.stream()
+            .collect(Collectors.groupingBy(
+                    PostsTags::getPostId,
+            Collectors.mapping(pt -> tags.get(pt.getTagId()), Collectors.toList())));
+
+    return posts.stream().map(p -> PostResponse.builder()
+            .tags(tagsByPostId.get(p.getId()))
+            .title(p.getTitle())
+            .image(p.getImage())
+            .body(p.getBody())
+            .id(p.getId())
+            .category(p.getCategory())
+            .user(p.getUser())
+            .createdAt(p.getCreatedAt())
+            .updatedAt(p.getUpdatedAt())
+            .build())
+            .toList();
   }
 }

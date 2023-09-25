@@ -25,4 +25,9 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
     }
     return null;
   }
+
+
+  // also it might be used as
+  // @AuthenticationPrincipal User user
+  // without some custom annotations
 }

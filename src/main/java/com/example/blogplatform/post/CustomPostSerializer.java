@@ -1,14 +1,15 @@
 package com.example.blogplatform.post;
 
+import com.example.blogplatform.post.dto.PostResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
-public class CustomPostSerializer extends JsonSerializer<Post> {
+public class CustomPostSerializer extends JsonSerializer<PostResponse> {
   @Override
-  public void serialize(Post post, JsonGenerator gen, SerializerProvider provider) throws IOException {
+  public void serialize(PostResponse post, JsonGenerator gen, SerializerProvider provider) throws IOException {
     gen.writeStartObject();
 
     gen.writeNumberField("id", post.getId());
@@ -36,6 +37,21 @@ public class CustomPostSerializer extends JsonSerializer<Post> {
       gen.writeStringField("name", post.getCategory().getName());
       gen.writeEndObject();
     }
+
+    gen.writeFieldName("tags");
+    gen.writeStartArray();
+
+    post.getTags().forEach(tag -> {
+      try {
+        gen.writeStartObject();
+        gen.writeNumberField("id", tag.getId());
+        gen.writeStringField("name", tag.getName());
+        gen.writeEndObject();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    });
+    gen.writeEndArray();
 
     gen.writeEndObject();
   }

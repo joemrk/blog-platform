@@ -2,12 +2,8 @@ package com.example.blogplatform.post;
 
 import com.example.blogplatform.category.Category;
 import com.example.blogplatform.user.User;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -21,7 +17,7 @@ import java.util.Date;
 @Table(name="posts")
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonSerialize(using = CustomPostSerializer.class)
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class , property = "id")
 public class Post {
 
   @Id
@@ -51,4 +47,13 @@ public class Post {
   @JoinColumn(name = "categoryId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Category category;
+
+//  @ManyToMany(mappedBy = "posts", fetch = FetchType.LAZY)
+//  @ManyToMany(fetch = FetchType.LAZY)
+//  @JoinTable(
+//          name = "posts_tags",
+//          joinColumns= @JoinColumn(name = "postId", referencedColumnName = "id"),
+//          inverseJoinColumns = @JoinColumn(name = "tagId", referencedColumnName = "id"))
+//  @JsonManagedReference(value = "tags")
+//  private List<Tag> tags;
 }

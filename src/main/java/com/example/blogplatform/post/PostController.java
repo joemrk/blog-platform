@@ -2,6 +2,7 @@ package com.example.blogplatform.post;
 
 import com.example.blogplatform.annotations.CurrentUser;
 import com.example.blogplatform.post.dto.PostCreateDto;
+import com.example.blogplatform.post.dto.PostResponse;
 import com.example.blogplatform.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,22 +22,22 @@ public class PostController {
   }
 
   @GetMapping("/") // ?s={titleContains}
-  public ResponseEntity<List<Post>> findByTitle(@RequestParam("s") String s){
+  public ResponseEntity<List<PostResponse>> findByTitle(@RequestParam("s") String s){
     return ResponseEntity.ok().body(postService.findByTitle(s));
   }
 
   @GetMapping
-  public ResponseEntity<List<Post>> findAll(){
+  public ResponseEntity<List<PostResponse>> findAll(){
     return ResponseEntity.ok().body(postService.findAll());
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Post> findById(@PathVariable String id){
+  public ResponseEntity<PostResponse> findById(@PathVariable String id){
     return ResponseEntity.ok().body(postService.findById(Long.parseLong(id)));
   }
 
   @GetMapping("/author/{id}")
-  public ResponseEntity<List<Post>> findByUser(@PathVariable String id){
+  public ResponseEntity<List<PostResponse>> findByUser(@PathVariable String id){
     return ResponseEntity.ok().body(postService.findByUser(Long.parseLong(id)));
   }
 
@@ -46,7 +47,7 @@ public class PostController {
   }
 
   @GetMapping("/my")
-  public ResponseEntity<List<Post>> findByCurrentUser(@CurrentUser User current){
+  public ResponseEntity<List<PostResponse>> findByCurrentUser(@CurrentUser User current){
     return ResponseEntity.ok().body(postService.findByUser(current.getId()));
   }
 
