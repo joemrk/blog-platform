@@ -7,13 +7,13 @@ import com.example.blogplatform.post.dto.PostCreateDto;
 import com.example.blogplatform.post.dto.PostResponse;
 import com.example.blogplatform.posts_tags.PostsTags;
 import com.example.blogplatform.posts_tags.PostsTagsRepository;
+import com.example.blogplatform.score.ScoreService;
 import com.example.blogplatform.tag.Tag;
 import com.example.blogplatform.tag.TagService;
 import com.example.blogplatform.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,29 +25,35 @@ public class PostService {
   private final FileSystemService fileSystemService;
   private final PostsTagsRepository postsTagsRepository;
   private final TagService tagsService;
+  private final ScoreService scoreService;
 
   @Autowired
-  public PostService(PostRepository postRepository, FileSystemService fileSystemService, PostsTagsRepository postsTagsRepository, TagService tagsService) {
+  public PostService(
+    PostRepository postRepository, 
+    FileSystemService fileSystemService, 
+    PostsTagsRepository postsTagsRepository, 
+    TagService tagsService,
+    ScoreService scoreService) {
     this.postRepository = postRepository;
     this.fileSystemService = fileSystemService;
     this.postsTagsRepository = postsTagsRepository;
     this.tagsService = tagsService;
+    this.scoreService = scoreService;
   }
 
   public List<PostResponse> findAll() {
     List<Post> posts =  postRepository.findAll();
-    return this.joinTags(posts);
-//    return posts;
+    return joinScore(joinTags(posts));
   }
 
   public PostResponse findById(Long id) {
     Post exist =  postRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Post not found"));
-    return this.joinTags(List.of(exist)).get(0);
+    return joinScore(joinTags(List.of(exist))).get(0);
   }
 
   public List<PostResponse> findByTitle(String title) {
-    return joinTags(postRepository.findByTitleLikeIgnoreCase("%" + title + "%"));
+    return joinScore(joinTags(postRepository.findByTitleLikeIgnoreCase("%" + title + "%")));
   }
 
   public Post createOne(PostCreateDto dto, User current) {
@@ -89,7 +95,7 @@ public class PostService {
   }
 
   public List<PostResponse> findByUser(Long userId) {
-    return joinTags(postRepository.findByUserId(userId));
+    return joinScore(joinTags(postRepository.findByUserId(userId)));
   }
 
   public List<Post> findByCategory(Long userId) {
@@ -125,5 +131,18 @@ public class PostService {
             .updatedAt(p.getUpdatedAt())
             .build())
             .toList();
+  }
+
+  private List<PostResponse> joinScore(List<PostResponse> posts) {
+    Set<Long> postsIds = posts.stream()
+            .map(PostResponse::getId)
+            .collect(Collectors.toSet());
+
+    Map<Long, Integer> scores = scoreService.getPostScore(postsIds);
+    
+    return posts.stream().map(p -> {
+      p.setScore(scores.get(p.getId()));
+      return p;
+    }).toList();
   }
 }

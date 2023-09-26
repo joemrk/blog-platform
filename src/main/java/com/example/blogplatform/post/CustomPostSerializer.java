@@ -19,6 +19,12 @@ public class CustomPostSerializer extends JsonSerializer<PostResponse> {
     gen.writeStringField("createdAt", post.getCreatedAt().toString());
     gen.writeStringField("updatedAt", post.getUpdatedAt().toString());
 
+    if(post.getScore() == null){
+      gen.writeNumberField("score", 0);
+    } else {
+      gen.writeNumberField("score", post.getScore());
+    }
+
     if(post.getUser() == null){
       gen.writeNullField("user");
     } else {

@@ -36,4 +36,6 @@ public class PostResponse {
   private Category category;
 
   private List<Tag> tags;
+
+  private Integer score = 0;
 }
